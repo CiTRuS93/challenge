@@ -54,3 +54,28 @@ function writeEvent(event) {
   }
 }
 
+var url = require('url'); 
+var http = require('http');
+//create a server object:
+http.createServer(function (req, res) {
+  var q = url.parse(req.url, true);
+  new Promise(function (resolve, reject) {
+  if(q.path=='/events/countWords'){
+    resolve(words)
+  }else if(q.path == '/events/countByEventType'){
+    resolve(events)
+  }else{
+    reject()
+  }
+   //end the response
+}).then((counter)=>{
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.write(JSON.stringify(counter)); //write a response to the client
+  res.end();
+},()=>{
+  res.statusCode = 400;
+  res.end('400: Bad Request');
+  return;
+})
+}).listen(8080); //the server object listens on port 8080 
+
